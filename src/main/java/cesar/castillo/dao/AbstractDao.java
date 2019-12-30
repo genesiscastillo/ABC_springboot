@@ -54,14 +54,14 @@ public abstract class AbstractDao<T> {
         return getEntityManager().find(entityClass, id);
     }
 
-    @SuppressWarnings("all") 
+    @SuppressWarnings("unchecked") 
     public List<T> getAll() {
         CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         cq.select(cq.from(entityClass));
         return getEntityManager().createQuery(cq).getResultList();
     }
 
-    @SuppressWarnings("all") 
+    @SuppressWarnings("unchecked") 
     public List<T> findRange(int[] range) {
         CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         cq.select(cq.from(entityClass));
@@ -71,7 +71,7 @@ public abstract class AbstractDao<T> {
         return q.getResultList();
     }
 
-    @SuppressWarnings("all") 
+    @SuppressWarnings("unchecked") 
     public int count() {
         CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         Root<T> rt = cq.from(entityClass);
