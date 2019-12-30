@@ -31,6 +31,10 @@ Servicios Rest :
 	}
 -----------------------------------------------------------------------------------------	
 
+Para testing con Spock Framework (prueba de conceptos)
+
+	* gradle clean test
+
 Documentos:
 
 	* diagrmas y otros    : src/main/resources/Propuestas_Ejercicio_1.docx
@@ -40,9 +44,11 @@ Documentos:
 ###############################
 
 Informacion de recursos
-https://httpstatuses.com/
-https://www.baeldung.com/exception-handling-for-rest-with-spring
-https://www.mkyong.com/regular-expressions/how-to-validate-password-with-regular-expression/
-http://openjpa.apache.org/builds/3.0.0/apache-openjpa/docs/manual.html
-https://www.javatips.net/blog/hibernate-jpa-with-derby
-https://www.mkyong.com/spring/spring-embedded-database-examples/
+
+	* https://httpstatuses.com/
+	* https://www.baeldung.com/exception-handling-for-rest-with-spring
+	* https://www.mkyong.com/regular-expressions/how-to-validate-password-with-regular-expression/
+	* http://openjpa.apache.org/builds/3.0.0/apache-openjpa/docs/manual.html
+	* https://www.javatips.net/blog/hibernate-jpa-with-derby
+	* https://www.mkyong.com/spring/spring-embedded-database-examples/
+	* https://www.testwithspring.com/lesson/running-unit-tests-with-gradle-spock-edition/
