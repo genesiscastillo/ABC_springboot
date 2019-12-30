@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration>
+
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d [%30.30t] %-30.30c{1} %-5p %m%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="cesar.castillo" level="info" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+	
+	<root level="error">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>
