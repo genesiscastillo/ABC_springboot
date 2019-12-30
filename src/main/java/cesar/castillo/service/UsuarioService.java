@@ -12,6 +12,7 @@ public interface UsuarioService {
 	String validatePaswoord(String password) throws BussinesException ;
 	String validateEmail(String email) throws BussinesException ;
 	List<ResponseUsuario> obtenerUsuarios();
-	Boolean validateToken(String email, String token) throws BussinesException;
+	void validateTokenJWT(String email , String jwt) throws BussinesException ;
+	String getTokenJWT(String email);
 	
 }

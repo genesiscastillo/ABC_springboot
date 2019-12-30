@@ -49,7 +49,7 @@ public class Usuario implements Serializable {
 	@Column(name="PASSWORD")
 	private String password;
 
-	@Column(name="TOKEN")
+	@Column(name="TOKEN" , length=300)
 	private String token;
 
 	@PrePersist

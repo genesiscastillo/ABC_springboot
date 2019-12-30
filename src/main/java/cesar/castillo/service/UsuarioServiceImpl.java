@@ -3,15 +3,13 @@ package cesar.castillo.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +21,8 @@ import cesar.castillo.exception.BussinesException;
 import cesar.castillo.vo.EstadoUsuario;
 import cesar.castillo.vo.ResponseUsuario;
 import cesar.castillo.vo.User;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 @Service
 @Transactional
@@ -54,7 +54,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 		user2.setName(user.getName());
 		user2.setPassword(user.getPassword());
 		
-		String token = getToken(user2);
+		String token = getTokenJWT(user.getEmail());
 		EstadoUsuario estadoUsuario = EstadoUsuario.INACTIVO;
 		ResponseUsuario responseUsuario = new ResponseUsuario(name, email, password, id, fechaCreacion,
 				fechaModificacion, lastLogin, token, estadoUsuario);
@@ -95,49 +95,37 @@ public class UsuarioServiceImpl implements UsuarioService {
 		return usuarioDao.findAll();
 	}
 	
-	private String getToken(User user) {
-		String signature = null;
-		try {
-			Mac mac = Mac.getInstance("HmacSHA1");
-		    byte[] keyBytes = "secretKey".getBytes("UTF8");
-		    SecretKeySpec signingKey = new SecretKeySpec(keyBytes, "HmacSHA1");
-		    mac.init(signingKey);
-		    
-		    StringBuilder stringToSign = new StringBuilder(user.toString());
-		    
-		    byte[] signBytes = mac.doFinal(stringToSign.toString().getBytes("UTF8"));
-		    signature = Base64.getEncoder().encodeToString(signBytes);
-		    
-		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, e.getMessage() , e);
-		}
-		return signature;
+	@Override
+	public String getTokenJWT(String email) {
+		String base64EncodedSecretKey = Base64.getEncoder().encodeToString(email.getBytes());
+		Long tiempo = System.currentTimeMillis();
+		String jwt = Jwts.builder()
+						.setId(UUID.randomUUID().toString())
+						.signWith(SignatureAlgorithm.HS256, base64EncodedSecretKey)
+						.setSubject("Usuario Por Autorizar")
+						.setIssuedAt( new Date( tiempo ))
+						.setExpiration(new Date( tiempo + 6000000))
+						.claim("email", "genesiscastillo@hotmail.com")
+						.compact();
+		return jwt;
 	}
 	
 	@Override
-	public Boolean validateToken(String email, String token) throws BussinesException{
+	public void validateTokenJWT(String email , String jwt) throws BussinesException {
 		Optional<Usuario> optional = usuarioDao.findByEmail(email);
 		if(!optional.isPresent()) {
 			new BussinesException("correo no registrado");
 		}
-		Usuario usuario = optional.get();
-		
-		User user = new User();
-		user.setEmail(usuario.getEmail());
-		user.setName(usuario.getName());
-		user.setPassword(usuario.getPassword());
-		
-		String signature = getToken(user); 
-		
-		byte encode[] = Base64.getEncoder().encode(token.getBytes());
-		
-		String encodeString = new String(encode);
-		String decode = new String(Base64.getDecoder().decode(encodeString.getBytes()));
-		
-		Boolean status = signature.equals(decode); 
-		if(status) {
-			usuarioDao.activarUsuario(email);
+
+		String base64EncodedSecretKey = Base64.getEncoder().encodeToString(email.getBytes());
+		try {
+		    Jwts.parser()         
+		       .setSigningKey(base64EncodedSecretKey)
+		       .parseClaimsJws(jwt).getBody();
+		    
+		    usuarioDao.activarUsuario(email);
+		}catch(Exception exception) {
+			throw new BussinesException("token invalido");
 		}
-		return status;
 	}
 }
