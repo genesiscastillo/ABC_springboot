@@ -4,7 +4,7 @@ Spring Boot in a Java Container
 
 Para iniciar SpringBoot
 
-	* gradlew bootRun
+	* gradle bootRun
 	
 Servicios Rest :
 
@@ -31,6 +31,10 @@ Servicios Rest :
 	}
 -----------------------------------------------------------------------------------------	
 
+Documentos:
+
+	* diagrmas y otros    : src/main/resources/Propuestas_Ejercicio_1.docx
+	* Proyecto del SOAPui : src/main/resources/REST-Project-2-soapui-project.xml
 
 
 ###############################
