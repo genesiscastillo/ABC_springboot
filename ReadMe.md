@@ -52,3 +52,4 @@ Informacion de recursos
 	* https://www.javatips.net/blog/hibernate-jpa-with-derby
 	* https://www.mkyong.com/spring/spring-embedded-database-examples/
 	* https://www.testwithspring.com/lesson/running-unit-tests-with-gradle-spock-edition/
+	* https://stormpath.com/blog/jwt-java-create-verify
