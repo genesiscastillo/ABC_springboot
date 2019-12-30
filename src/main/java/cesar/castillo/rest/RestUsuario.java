@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cesar.castillo.service.UsuarioService;
 import cesar.castillo.vo.ActivarUsuario;
+import cesar.castillo.vo.EstadoUsuario;
 import cesar.castillo.vo.Mensaje;
 import cesar.castillo.vo.ResponseUsuario;
 import cesar.castillo.vo.User;
@@ -54,8 +55,10 @@ public class RestUsuario {
 	public ResponseEntity<?> activarUsuario(@RequestBody ActivarUsuario activarUsuario) {
 		try {
 			Boolean status = usuarioService.validateToken(activarUsuario.getEmail(), activarUsuario.getToken());
-			System.out.println("activarUsuario=" + status);
-			return ResponseEntity.ok().body(status);
+			String msj = String.format("El usuario %s cambia el estado a %s", activarUsuario.getEmail() , status ? EstadoUsuario.ACTIVO.name() : EstadoUsuario.INACTIVO.name());
+			Mensaje mensaje = new Mensaje();
+			mensaje.setMensaje( msj );
+			return ResponseEntity.ok().body(mensaje);
 		} catch (Exception exception) {
 			LOGGER.log(Level.SEVERE, exception.getMessage(), exception);
 			Mensaje mensaje = new Mensaje();
