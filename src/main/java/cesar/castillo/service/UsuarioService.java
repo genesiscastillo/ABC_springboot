@@ -12,7 +12,7 @@ public interface UsuarioService {
 	String validatePaswoord(String password) throws BussinesException ;
 	String validateEmail(String email) throws BussinesException ;
 	List<ResponseUsuario> obtenerUsuarios();
-	void validateTokenJWT(String email , String jwt) throws BussinesException ;
+	void validateEmailTokenJWT(String email, String jwt) throws BussinesException; 
 	String getTokenJWT(String email);
 	
 }

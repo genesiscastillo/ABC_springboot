@@ -1,5 +1,6 @@
 package cesar.castillo.service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -7,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.transaction.Transactional;
@@ -27,8 +27,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Service
 @Transactional
 public class UsuarioServiceImpl implements UsuarioService {
-
-	private static final Logger LOGGER = Logger.getLogger(UsuarioServiceImpl.class.getName());
 
 	@Autowired
 	UsuarioDao usuarioDao;
@@ -99,32 +97,35 @@ public class UsuarioServiceImpl implements UsuarioService {
 	public String getTokenJWT(String email) {
 		String base64EncodedSecretKey = Base64.getEncoder().encodeToString(email.getBytes());
 		Long tiempo = System.currentTimeMillis();
+		Long minuto = Duration.ofMinutes(1).toMillis();
 		String jwt = Jwts.builder()
 						.setId(UUID.randomUUID().toString())
 						.signWith(SignatureAlgorithm.HS256, base64EncodedSecretKey)
 						.setSubject("Usuario Por Autorizar")
 						.setIssuedAt( new Date( tiempo ))
-						.setExpiration(new Date( tiempo + 6000000))
+						.setExpiration(new Date( tiempo + minuto ))
 						.claim("email", "genesiscastillo@hotmail.com")
 						.compact();
 		return jwt;
 	}
 	
 	@Override
-	public void validateTokenJWT(String email , String jwt) throws BussinesException {
+	public void validateEmailTokenJWT(String email, String jwt) throws BussinesException {
 		Optional<Usuario> optional = usuarioDao.findByEmail(email);
-		if(!optional.isPresent()) {
+		if (!optional.isPresent()) {
 			new BussinesException("correo no registrado");
-		}
 
+		}
+		validateTokenJWT(email, jwt);
+		
+		usuarioDao.activarUsuario(email);
+	}
+
+	private void validateTokenJWT(String email, String jwt) throws BussinesException {
 		String base64EncodedSecretKey = Base64.getEncoder().encodeToString(email.getBytes());
 		try {
-		    Jwts.parser()         
-		       .setSigningKey(base64EncodedSecretKey)
-		       .parseClaimsJws(jwt).getBody();
-		    
-		    usuarioDao.activarUsuario(email);
-		}catch(Exception exception) {
+			Jwts.parser().setSigningKey(base64EncodedSecretKey).parseClaimsJws(jwt).getBody();
+		} catch (Exception exception) {
 			throw new BussinesException("token invalido");
 		}
 	}

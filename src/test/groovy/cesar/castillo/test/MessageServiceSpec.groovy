@@ -1,4 +1,4 @@
-package cesar.castillo.test;
+package cesar.castillo.test
 
 import org.junit.experimental.categories.Category
 

@@ -54,7 +54,7 @@ public class RestUsuario {
 	@RequestMapping(value = "/activarUsuario", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> activarUsuario(@RequestBody ActivarUsuario activarUsuario) {
 		try {
-			usuarioService.validateTokenJWT(activarUsuario.getEmail(), activarUsuario.getToken());
+			usuarioService.validateEmailTokenJWT(activarUsuario.getEmail(), activarUsuario.getToken());
 			String msj = String.format("El usuario %s cambia el estado a %s", activarUsuario.getEmail(),EstadoUsuario.ACTIVO.name());
 			Mensaje mensaje = new Mensaje();
 			mensaje.setMensaje( msj );
