@@ -32,8 +32,9 @@ public abstract class AbstractDao<T> {
     }
 
     public T create(T entity) {
+    	getEntityManager().getTransaction().begin();
         getEntityManager().persist(entity);
-        getEntityManager().flush();
+        getEntityManager().getTransaction().commit();
         return entity;
     }
 
@@ -54,14 +55,14 @@ public abstract class AbstractDao<T> {
         return getEntityManager().find(entityClass, id);
     }
 
-    @SuppressWarnings("unchecked") 
+    @SuppressWarnings({"rawtypes","unchecked"}) 
     public List<T> getAll() {
         CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         cq.select(cq.from(entityClass));
         return getEntityManager().createQuery(cq).getResultList();
     }
 
-    @SuppressWarnings("unchecked") 
+    @SuppressWarnings({"rawtypes","unchecked"})
     public List<T> findRange(int[] range) {
         CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         cq.select(cq.from(entityClass));
@@ -71,7 +72,7 @@ public abstract class AbstractDao<T> {
         return q.getResultList();
     }
 
-    @SuppressWarnings("unchecked") 
+    @SuppressWarnings({"rawtypes","unchecked"})
     public int count() {
         CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         Root<T> rt = cq.from(entityClass);

@@ -20,24 +20,4 @@ public class Application implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		LOGGER.info("Server Ready...!!!! - Nicole Tapia 1.0");
 	}
-//    @Bean
-//    public CommandLineRunner run(UsuarioRepositoryImpl usuarioRepository) throws Exception{
-//    	return (String[] args) -> {
-//    		usuarioRepository.findAll().forEach(usuario -> LOGGER.info( usuario.toString() ) );
-//    	};
-//    }
-    
-//    @Bean(name="cgrDatasource")
-//    @Primary
-//    @ConfigurationProperties(prefix="spring.datasource")
-//    public DataSource primaryDataSource() {
-////    			EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
-////    			EmbeddedDatabase db = builder
-////    				.setType(EmbeddedDatabaseType.DERBY)
-////    				.addScript("classpath:META-INF/create.sql")
-////    				.build();
-//    	//return db;
-//        return DataSourceBuilder.create().build();
-//    }
-
 }	

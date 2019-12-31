@@ -13,17 +13,17 @@ public class Phone implements Serializable {
 
 	private static final long serialVersionUID = -8742763963603970871L;
 
-	@Column(name="ID")
+	@Column(name="ID"  , length=255)
 	private String id;
 	
-	@Column(name="CODIGO_CITY")
+	@Column(name="CODIGO_CITY" , length=50)
 	private String codigoCity;
 
-	@Column(name="CODIGO_PAIS")
+	@Column(name="CODIGO_PAIS" , length=50)
 	private String codigoPais;
 
 	@Id
-	@Column(name="ITEM")
+	@Column(name="ITEM" , length=255)
 	private String item;
 
 	@Column(name="NUMERO")

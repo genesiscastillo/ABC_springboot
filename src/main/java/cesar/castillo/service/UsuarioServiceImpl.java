@@ -1,8 +1,7 @@
 package cesar.castillo.service;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +14,8 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cesar.castillo.dao.UsuarioDao;
+import cesar.castillo.dao.UsuarioDaoImpl;
+import cesar.castillo.entity.Phone;
 import cesar.castillo.entity.Usuario;
 import cesar.castillo.exception.BussinesException;
 import cesar.castillo.vo.EstadoUsuario;
@@ -29,7 +29,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class UsuarioServiceImpl implements UsuarioService {
 
 	@Autowired
-	UsuarioDao usuarioDao;
+	UsuarioDaoImpl usuarioDao;
 
 	@Override
 	public ResponseUsuario registrarUsuario(User user) throws BussinesException {
@@ -39,31 +39,41 @@ public class UsuarioServiceImpl implements UsuarioService {
 		if (optional1.isPresent()) {
 			throw new BussinesException("El correo ya registrado");
 		}
-		LocalDate today = LocalDate.now();
-		String formattedDate = today.format(DateTimeFormatter.ofPattern("dd-MMM-yy"));
+
 		String id = UUID.randomUUID().toString();
 		String name = user.getName();
 		String password = validatePaswoord(user.getPassword());
-		String fechaCreacion = formattedDate;
-		String fechaModificacion = null;
-		String lastLogin = formattedDate;
-		User user2 = new User();
-		user2.setEmail(user.getEmail());
-		user2.setName(user.getName());
-		user2.setPassword(user.getPassword());
-		
+
 		String token = getTokenJWT(user.getEmail());
 		EstadoUsuario estadoUsuario = EstadoUsuario.INACTIVO;
-		ResponseUsuario responseUsuario = new ResponseUsuario(name, email, password, id, fechaCreacion,
-				fechaModificacion, lastLogin, token, estadoUsuario);
+		
+		Usuario usuario = new Usuario();
+		usuario.setEmail( email );
+		usuario.setEstadoUsuario( estadoUsuario );
+		usuario.setId( id);
+		usuario.setLastLogin( null );
+		usuario.setName( name );
+		usuario.setPassword( password );
+		usuario.setToken( token );
 
-		usuarioDao.createUsuario(responseUsuario);
+		usuarioDao.create(usuario);
 
-		Optional<Usuario> optional = usuarioDao.findByEmail(email);
-		Usuario usuario = optional.get();
-		return new ResponseUsuario(usuario.getName(), usuario.getEmail(), usuario.getPassword(), usuario.getId(),
+		user.getPhones().forEach(phone ->{
+				Phone phone2 = new Phone();
+				phone2.setCodigoCity( phone.getCitycode());
+				phone2.setCodigoPais( phone.getContrycode());
+				phone2.setNumero( phone.getNumber());
+				phone2.setId( id );
+				phone2.setItem( UUID.randomUUID().toString());
+				usuarioDao.createPhone(phone2);
+			}
+		);
+
+		ResponseUsuario responseUsuario = new ResponseUsuario(usuario.getName(), usuario.getEmail(), usuario.getPassword(), usuario.getId(),
 				usuario.getFechaCreacion(), usuario.getFechaModificacion(), usuario.getLastLogin(), usuario.getToken(),
-				usuario.getEstadoUsuario());
+				usuario.getEstadoUsuario() );
+		responseUsuario.setPhones(user.getPhones());
+		return responseUsuario;
 	}
 
 	@Override
@@ -90,7 +100,20 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Override
 	public List<ResponseUsuario> obtenerUsuarios() {
-		return usuarioDao.findAll();
+		List<ResponseUsuario> responseUsuarios = new ArrayList<>();
+		List<Usuario> usuarios = usuarioDao.getAll();
+		usuarios.forEach(usuario ->{
+				ResponseUsuario responseUsuario = new ResponseUsuario(usuario.getName(), usuario.getEmail(), usuario.getPassword() , usuario.getId() , usuario.getFechaCreacion(), usuario.getFechaModificacion(), usuario.getLastLogin(), usuario.getToken() ,usuario.getEstadoUsuario());
+				usuarioDao.findAllPhoneById(usuario.getId()).forEach(phone ->{
+					cesar.castillo.vo.Phone phone2 = new cesar.castillo.vo.Phone();
+					phone2.setCitycode(phone.getCodigoCity());
+					phone2.setContrycode(phone.getCodigoPais());
+					phone2.setNumber(phone.getNumero());
+					responseUsuario.add(phone2);
+				});
+				responseUsuarios.add(responseUsuario);
+		});
+		return responseUsuarios;
 	}
 	
 	@Override
@@ -114,10 +137,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 		Optional<Usuario> optional = usuarioDao.findByEmail(email);
 		if (!optional.isPresent()) {
 			new BussinesException("correo no registrado");
-
 		}
 		validateTokenJWT(email, jwt);
-		
 		usuarioDao.activarUsuario(email);
 	}
 

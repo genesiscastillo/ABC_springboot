@@ -24,29 +24,29 @@ public class Usuario implements Serializable {
 	private static final long serialVersionUID = -4720934813401620215L;
 
 	@Id
-	@Column(name="EMAIL")
+	@Column(name="EMAIL" , length=200)
 	private String email;
 
-	@Column(name="ID")
+	@Column(name="ID" , length=255)
 	private String id;
 	
-	@Column(name="ESTADO_USUARIO")
+	@Column(name="ESTADO_USUARIO" , length=10)
 	@Enumerated(EnumType.STRING)
 	private EstadoUsuario estadoUsuario;
 
-	@Column(name="FECHA_CREACION")
+	@Column(name="FECHA_CREACION" , length=10)
 	private String fechaCreacion;
 
-	@Column(name="FECHA_MODIFICACION")
+	@Column(name="FECHA_MODIFICACION" , length=10)
 	private String fechaModificacion;
 
-	@Column(name="LAST_LOGIN")
+	@Column(name="LAST_LOGIN" , length=10)
 	private String lastLogin;
 
-	@Column(name="NAME")
+	@Column(name="NAME" , length=100)
 	private String name;
 
-	@Column(name="PASSWORD")
+	@Column(name="PASSWORD" , length=50)
 	private String password;
 
 	@Column(name="TOKEN" , length=300)
