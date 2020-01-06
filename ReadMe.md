@@ -24,7 +24,7 @@ Servicios Rest :
 ----------------------------------------------------------------------------------------		 
 	* http://localhost:8081/obtenerUsuarios   type GET
 ----------------------------------------------------------------------------------------	
-	* http://localhost:8081//activarUsuario   type POST
+	* http://localhost:8081/activarUsuario   type POST
 	{
 		"email":"jjjuan@rodriguez.org",
 		"token":"KWcJK0vezkJ8tU1Jf00asMQ0TME="
